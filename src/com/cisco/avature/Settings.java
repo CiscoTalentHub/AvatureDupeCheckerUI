@@ -23,14 +23,21 @@ public class Settings {
 	
 	public Settings() throws Exception {
 		settingName = "src/settings.txt";
-		//settingsObj = (JSONObject) parseSettings();
-		settingsObj = new JSONObject();
+		settingsObj = (JSONObject) parseSettings();
+		//settingsObj = new JSONObject();
 		//file = new FileWriter(settingName);
 		
 		
 	}
 	
 	public static void setUsernamePass(String user, String pass) throws FileNotFoundException, IOException, ParseException{
+		
+		settingsObj.put("User",  user);
+		settingsObj.put("Pass",  pass);
+	
+		writeSettingsFile(settingsObj);
+		
+		/**
 		
 		if(!settingsFileExists()){
 			settingsObj.put("User",  user);
@@ -48,10 +55,20 @@ public class Settings {
 		
 			writeSettingsFile(settingsObj);
 		}
-		
+
+	*/
 	}
 	
 	public static void setDirectory(String dir) throws FileNotFoundException, IOException, ParseException {
+
+		settingsObj = (JSONObject) parseSettings();
+		
+		settingsObj.put("Directory",  dir);
+		
+	
+		writeSettingsFile(settingsObj);
+		
+		/**
 		
 		if(!settingsFileExists()){
 			settingsObj.put("User",  "");
@@ -71,23 +88,31 @@ public class Settings {
 			writeSettingsFile(settingsObj);
 		}
 		
-		
+		*/
 	}
 	
-	public String getPassword() throws FileNotFoundException, IOException, ParseException {
+	public String getUsername() {
 		
-		settingsObj = (JSONObject) parseSettings();
+		username = (String) settingsObj.get("User");
+		return username;
+	}
+	
+	public String getPassword() {
+		
+		//settingsObj = (JSONObject) parseSettings();
 		password = (String) settingsObj.get("Pass");
 		return password;
 		
 	}
 	
-	public String getDirectory() throws FileNotFoundException, IOException, ParseException {
+	public String getDirectory() {
 		
-		settingsObj = (JSONObject) parseSettings();
+		//settingsObj = (JSONObject) parseSettings();
 		dir = (String) settingsObj.get("Directory");
 		return dir;
 	}
+	
+	/**
 	
 	private static boolean settingsFileExists() {
 		
@@ -97,6 +122,7 @@ public class Settings {
 		return exists;
 		
 	}
+	*/
 	
 	private static Object parseSettings() throws FileNotFoundException, IOException, ParseException {
 		

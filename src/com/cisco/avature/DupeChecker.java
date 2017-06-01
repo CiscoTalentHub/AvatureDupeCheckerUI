@@ -147,6 +147,9 @@ public class DupeChecker {
 			String errorMsg = "Please Set Avature Username and Password";
 			messageBox.setMessage(errorMsg);
 			messageBox.open();
+			
+			//Create initial Settings File
+			createSettingsFile();
 
 		}
 		
@@ -300,9 +303,22 @@ public class DupeChecker {
 					// Medusa File name
 					String medusaName = fn.substring(fn.lastIndexOf('\\') + 1);
 					// Working Dir of Medusa File
-					String dir = fn.substring(0, fn.lastIndexOf('\\') + 1);
+					//String dir = fn.substring(0, fn.lastIndexOf('\\') + 1);
 					// Output File name and dir
-					outMedusa = dir + "Checked " + medusaName;
+					//Settings settings;
+					try {
+						Settings settings = new Settings();
+						String dir = settings.getDirectory().replace('/', '\\') + "\\";
+						
+						outMedusa = dir + "Checked " + medusaName;
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+					//String dir = settings.getDirectory();
+					
+					//outMedusa = dir + "Checked " + medusaName;
 
 					new Thread(new Runnable() {
 						public void run() {
@@ -348,6 +364,13 @@ public class DupeChecker {
 						try {
 							CryptoPass decryptPass = new CryptoPass();
 							
+							Settings settings = new Settings();
+							
+							String user = (String) settings.getUsername();
+							String pass = (String) settings.getPassword();
+							String dir = (String) settings.getDirectory();
+							
+							/**
 							JSONParser parser = new JSONParser();
 							Object obj = parser.parse(new FileReader(
 					                    "src/settings.txt"));
@@ -358,7 +381,9 @@ public class DupeChecker {
 					         String pass = (String) jsonObject.get("Pass");
 					         String directory = (String) jsonObject.get("Directory");
 					         
-					         System.out.println("Directory String: " + directory);
+					         */
+					         
+					         System.out.println("Directory String: " + dir);
 					         
 									
 							avaturePage = openAvature(txtInfo, user, decryptPass.decrypt(pass));
@@ -1253,5 +1278,21 @@ public class DupeChecker {
 		if (display == null)
 			display = Display.getDefault();
 		return display;
+	}
+	
+	private void createSettingsFile() {
+		
+		JSONObject settingsObj = new JSONObject();
+		
+		settingsObj.put("User",  "");
+		settingsObj.put("Pass",  "");
+		settingsObj.put("Directory", "src/");
+		
+		try (FileWriter file = new FileWriter("src/settings.txt")) {
+			file.write(settingsObj.toJSONString());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
