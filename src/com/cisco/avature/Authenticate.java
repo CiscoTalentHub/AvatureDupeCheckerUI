@@ -92,7 +92,7 @@ public class Authenticate extends Dialog {
 				}
 			}
 		});
-		btnLogIn.setText("Login");
+		btnLogIn.setText("Set Login");
 		btnLogIn.setBounds(83, 124, 102, 35);
 
 	}
