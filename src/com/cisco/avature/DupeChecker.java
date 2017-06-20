@@ -19,6 +19,7 @@ import java.io.IOException;
 //import java.net.URL;
 //import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -39,7 +40,7 @@ import org.openqa.selenium.By;
 
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.StaleElementReferenceException;
+//import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
@@ -49,20 +50,22 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 //import org.openqa.selenium.firefox.FirefoxDriver;
 
-/**
-import org.openqa.selenium.html5.LocalStorage;
-import org.openqa.selenium.html5.WebStorage;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+
+//import org.openqa.selenium.html5.LocalStorage;
+//import org.openqa.selenium.html5.WebStorage;
+//import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
 import org.openqa.selenium.remote.CapabilityType;
-*/
+
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import org.apache.poi.EncryptedDocumentException;
 //import org.apache.poi.common.usermodel.Hyperlink;
@@ -108,6 +111,10 @@ public class DupeChecker {
 	// private Sheet dataFile;
 	private static List<UserInfo> userList = new ArrayList<UserInfo>();
 	private static List<AvatureInfo> avatureList = new ArrayList<AvatureInfo>();
+	
+	//TimeStamp format to use for saving Spread Sheet
+	private static DateFormat saveDate = new SimpleDateFormat("HHmmss");
+	private static Date dateobj = new Date();
 
 	private static final String[] FILTER_EXTS = { "*.xlsx" };
 	private static final String[] FILTER_NAMES = { "Medusa File (*.xlsx)" };
@@ -313,7 +320,7 @@ public class DupeChecker {
 
 						txtInfo.append("Save to Directory: " + dir + "\n\n");
 
-						outMedusa = dir + "Checked " + medusaName;
+						outMedusa = dir + "Checked_" + saveDate.format(dateobj) + "_" + medusaName;
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -493,31 +500,35 @@ public class DupeChecker {
 	public static WebDriver openAvature(Text txtInfo, String user, String pass) {
 
 		WebDriver driver;
+		
+		
 
 		final DesiredCapabilities capabilities = DesiredCapabilities.chrome();
 
-		/**
-		 * final LoggingPreferences logs = new LoggingPreferences();
-		 * logs.enable(LogType.BROWSER, java.util.logging.Level.OFF);
-		 * logs.enable(LogType.CLIENT, java.util.logging.Level.OFF);
-		 * logs.enable(LogType.DRIVER, java.util.logging.Level.OFF);
-		 * logs.enable(LogType.PERFORMANCE, java.util.logging.Level.OFF);
-		 * logs.enable(LogType.PROFILER, java.util.logging.Level.OFF);
-		 * logs.enable(LogType.SERVER, java.util.logging.Level.OFF);
-		 * capabilities.setCapability(CapabilityType.LOGGING_PREFS, logs);
-		 */
+		
+		 final LoggingPreferences logs = new LoggingPreferences();
+		 logs.enable(LogType.BROWSER, java.util.logging.Level.OFF);
+		 logs.enable(LogType.CLIENT, java.util.logging.Level.OFF);
+		 logs.enable(LogType.DRIVER, java.util.logging.Level.OFF);
+		 logs.enable(LogType.PERFORMANCE, java.util.logging.Level.OFF);
+		 logs.enable(LogType.PROFILER, java.util.logging.Level.OFF);
+		 logs.enable(LogType.SERVER, java.util.logging.Level.OFF);
+		 capabilities.setCapability(CapabilityType.LOGGING_PREFS, logs);
+		 
 
 		ChromeOptions options = new ChromeOptions();
 		options.addArguments("--start-maximized");
 		//options.addArguments("--headless");
-		// options.addArguments("--disable-gpu");
+		options.addArguments("--disable-gpu");
 
 		capabilities.setCapability(ChromeOptions.CAPABILITY, options);
 
 		System.setProperty("webdriver.chrome.driver", "src/chromedriver.exe");
 
 		driver = new ChromeDriver(capabilities);
-		// driver = new FirefoxDriver();
+		
+		
+		//driver = new FirefoxDriver();
 
 		String info = "Avature authentication in progress!";
 		updateInfoBox(getDisplay(), txtInfo, info);
@@ -537,9 +548,15 @@ public class DupeChecker {
 			e2.printStackTrace();
 			;
 		}
+		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		// driver.findElement(By.id("userInput")).sendKeys("dinho");
-		// driver.findElement(By.id("passwordInput")).sendKeys("Welcome1!");
+		
 		driver.findElement(By.id("userInput")).sendKeys(user);
 		driver.findElement(By.id("passwordInput")).sendKeys(pass);
 		driver.findElement(By.id("login-button")).submit();
@@ -993,6 +1010,8 @@ public class DupeChecker {
 			} else {
 				keywords = linkedIn;
 			}
+			
+			
 
 			try {
 				WebDriverWait wait = new WebDriverWait(avaturePage, 50);
@@ -1005,10 +1024,6 @@ public class DupeChecker {
 				String info = "Timeout Exceptioin Error 1";
 				updateInfoBox(getDisplay(), txtInfo, info);
 
-				// Close tab and switch back to main window
-				// avaturePage.close();
-				// avaturePage.switchTo().window(tabs.get(0)); // switch back to
-				// main screen
 				return false;
 				// e2.printStackTrace();
 
